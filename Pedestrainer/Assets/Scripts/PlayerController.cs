@@ -19,6 +19,8 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private float offset;
     private float distToGround;
+    private Animator animator;
+    private SpriteRenderer spriteRenderer;
 
 
     // Start is called before the first frame update
@@ -31,6 +33,8 @@ public class PlayerController : MonoBehaviour
         shouldJump = false;
         //offset = (transform.position.y-ground.transform.position.y) + 1;
         distToGround = collider.bounds.extents.y;
+        animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -47,6 +51,31 @@ public class PlayerController : MonoBehaviour
         //get the width of the object
         float width = rend.bounds.size.x;
         float height = rend.bounds.size.y;
+
+        transform.rotation = Quaternion.identity;
+
+        //animation 
+        if (Input.GetAxis("Horizontal") != 0)
+        {
+            animator.SetBool("move", true);
+        }
+        else
+        {
+            animator.SetBool("move", false);
+        }
+        if (Input.GetKeyDown("q"))
+        {
+            animator.SetTrigger("attack");
+        }
+            //animation got mirrored when player goes left
+        if (Input.GetAxis("Horizontal") < 0)
+        {
+            spriteRenderer.flipX = true;
+        }
+        else
+        {
+            spriteRenderer.flipX = false;
+        }
 
         //generate velocity to move horizontally
         velocity = new Vector3(Input.GetAxis("Horizontal") * 1f, 0f, 0f);
