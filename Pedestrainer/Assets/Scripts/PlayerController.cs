@@ -35,6 +35,8 @@ public class PlayerController : MonoBehaviour
         float width = rend.bounds.size.x;
         float height = rend.bounds.size.y;
 
+        transform.rotation = Quaternion.identity;
+
         //animation 
         if (Input.GetAxis("Horizontal") != 0)
         {
@@ -48,11 +50,7 @@ public class PlayerController : MonoBehaviour
         {
             animator.SetTrigger("attack");
         }
-        else
-        {
-            // animator.SetBool("attack", false);
-        }
-
+            //animation got mirrored when player goes left
         if (Input.GetAxis("Horizontal") < 0)
         {
             spriteRenderer.flipX = true;
