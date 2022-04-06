@@ -8,11 +8,16 @@ public class PlayerController : MonoBehaviour
     private Animator anim;
     private Vector3 velocity;
     public float speed = 3.0f;
+
+    private Animator animator;
+    private SpriteRenderer spriteRenderer;
     // Start is called before the first frame update
     void Start()
     {
         velocity = new Vector3(0f, 0f, 0f);
         rend = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -30,8 +35,33 @@ public class PlayerController : MonoBehaviour
         float width = rend.bounds.size.x;
         float height = rend.bounds.size.y;
 
+        transform.rotation = Quaternion.identity;
+
+        //animation 
+        if (Input.GetAxis("Horizontal") != 0)
+        {
+            animator.SetBool("move", true);
+        }
+        else
+        {
+            animator.SetBool("move", false);
+        }
+        if (Input.GetKeyDown("q"))
+        {
+            animator.SetTrigger("attack");
+        }
+            //animation got mirrored when player goes left
+        if (Input.GetAxis("Horizontal") < 0)
+        {
+            spriteRenderer.flipX = true;
+        }
+        else
+        {
+            spriteRenderer.flipX = false;
+        }
+
         //generate velocity to move horizontally
-        velocity = new Vector3(Input.GetAxis("Horizontal") * 1f, 0f, 0f);  
+        velocity = new Vector3(Input.GetAxis("Horizontal") * 1f, 0f, 0f);
 
         //make sure the obect is inside the borders... if edge is hit reverse direction
         if ((transform.position.x <= leftBorder + width / 2.0) && velocity.x < 0f)
@@ -48,7 +78,8 @@ public class PlayerController : MonoBehaviour
         transform.Translate(velocity * Time.deltaTime * speed);
     }
 
-    void fixedUpdate(){
-        anim.Play("stand");
+    void fixedUpdate()
+    {
+        // anim.Play("stand");
     }
 }
