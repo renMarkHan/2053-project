@@ -21,7 +21,6 @@ public class GameController : MonoBehaviour
     }
 
     public void loadScene(){
-        
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 }
