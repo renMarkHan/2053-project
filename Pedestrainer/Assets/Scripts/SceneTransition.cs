@@ -5,8 +5,10 @@ using UnityEngine.SceneManagement;
 
 public class SceneTransition : MonoBehaviour
 {
-    public void OnTriggerEnter2D(Collider2D other) {
-        if(other.CompareTag("Player") && !other.isTrigger){
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.CompareTag("Player") && !collision.isTrigger)
+        {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
     }
