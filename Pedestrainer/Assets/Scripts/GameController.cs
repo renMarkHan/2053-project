@@ -5,10 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
+    public int healthPoint;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        healthPoint = 5;
     }
 
     public void startGame(){
@@ -21,7 +23,18 @@ public class GameController : MonoBehaviour
     }
 
     public void loadScene(){
-        
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
+    public void loseHP(int hp)
+    {
+        healthPoint -= hp;
+        Debug.Log("Current HP: "+healthPoint);
+    }
+
+    public void recoverHP(int hp)
+    {
+        healthPoint += hp;
+        Debug.Log("Current HP: " + healthPoint);
     }
 }
