@@ -181,7 +181,7 @@ GameObject:
   - component: {fileID: 91917035}
   m_Layer: 0
   m_Name: Tilemap_trap
-  m_TagString: Untagged
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4886,7 +4886,7 @@ PrefabInstance:
     - target: {fileID: 4188470391535540697, guid: 78d0bcb8600704ae1af6481f05adece8,
         type: 3}
       propertyPath: moveSpeed
-      value: 20
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 4188470391535540697, guid: 78d0bcb8600704ae1af6481f05adece8,
         type: 3}

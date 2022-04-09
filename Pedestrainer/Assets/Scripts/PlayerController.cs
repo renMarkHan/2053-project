@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour
             float height = rend.bounds.size.y;
             float moveHorizontal = Input.GetAxis("Horizontal");
 
-            //velocity = new Vector3(0f, 0f, 0f);
+            //no rotation
             transform.rotation = Quaternion.identity;
 
             //animation 
@@ -133,6 +133,13 @@ public class PlayerController : MonoBehaviour
 
 
     void FixedUpdate(){
+
+        if (gameController.healthPoint <= 0)
+        {
+            animator.SetBool("die", true);
+            gameOver = true;
+
+        }
         //anim.Play("stand");
 
         //Vector3 velocity = new Vector3(moveHorizontal, 0.0f, 0f);
@@ -156,6 +163,7 @@ public class PlayerController : MonoBehaviour
         {
             // jump
             if (canJump && Input.GetKeyDown("space") && isGrounded)
+
             {
                 print("jump");
 
@@ -168,7 +176,27 @@ public class PlayerController : MonoBehaviour
 
 
     private void OnCollisionEnter2D(Collision2D other)
+
     {
+        if (gameController.healthPoint <= 0)
+        {
+           // setBack();
+            transform.rotation = Quaternion.identity;
+            animator.SetBool("die", true);
+            gameOver = true;
+
+        }
+
+        if (other.collider.gameObject.CompareTag("Trap"))
+        {
+            //setBack();
+            transform.rotation = Quaternion.identity;
+            animator.SetTrigger("fall");
+            
+        }
+
+
+
         Collider2D collider = other.collider;
         Vector3 contactPoint = other.contacts[0].point;
         Vector3 center = collider.bounds.center;
@@ -192,11 +220,15 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-
+       
         print("collision exit");
             isGrounded = false;
         animator.SetBool("jump", true);
 
     }
-
+    private void setBack()
+    {
+        Vector3 velocityTemp = new Vector3(-1 *10 * 10*Time.deltaTime, 1 * 10* Time.deltaTime*3, 0);
+        transform.Translate(velocityTemp * Time.deltaTime * 30);
+    }
 }
