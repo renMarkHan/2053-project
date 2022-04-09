@@ -30,8 +30,12 @@ public class GameController : MonoBehaviour
     {
         healthPoint -= hp;
         Debug.Log("Current HP: "+healthPoint);
+      
     }
-
+    public int currentHP()
+    {
+        return healthPoint;
+    }
     public void recoverHP(int hp)
     {
         healthPoint += hp;
