@@ -2,16 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
     public int healthPoint;
     public int maxHP;
+    public Text endText;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        endText.text = "";
     }
 
     public void startGame(){
@@ -44,5 +46,15 @@ public class GameController : MonoBehaviour
     {
         healthPoint += hp;
         Debug.Log("Current HP: " + healthPoint);
+    }
+
+    public void GameOver(){
+        endText.text = "Game Over!!! You win!!!!!";
+    }
+
+    private void OnTriggerEnter2D(Collider2D other) {
+        if(other.CompareTag("Player")){
+            GameOver();
+        }
     }
 }
