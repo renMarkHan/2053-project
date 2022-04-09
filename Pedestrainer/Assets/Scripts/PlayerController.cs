@@ -7,9 +7,9 @@ public class PlayerController : MonoBehaviour
     private SpriteRenderer rend;
     private Animator anim;
     private Vector3 velocity;
-    public float speed = 3.0f;
+    //public float speed = 3.0f;
     public float jumpSpeed;
-    public float moveSpeed = 3.25f;
+    public float moveSpeed;
     //public Transform ground;
     private bool grounded;
 
@@ -59,22 +59,22 @@ public class PlayerController : MonoBehaviour
         if (Input.GetAxis("Horizontal") != 0)
         {
             
-            if (Input.GetKeyDown("d"))
+            if (Input.GetKey("d"))
             {
                 animator.SetBool("move", true);
                
-                velocity = new Vector3(1 * moveSpeed * Time.deltaTime, 0, 0);
+                velocity = new Vector3(1, 0, 0);
                 spriteRenderer.flipX = false;
                 //rb.AddForce(Vector2.right * moveSpeed, ForceMode2D.Impulse);
             }
-            else if (Input.GetKeyDown("a"))
+            if (Input.GetKey("a"))
             {
                 spriteRenderer.flipX = true;
                 
                 animator.SetBool("move", true);
                 
            
-                velocity = new Vector3(-1*moveSpeed*Time.deltaTime, 0, 0);
+                velocity = new Vector3(-1, 0, 0);
                 //velocity = new Vector3(-1f, 0f, 0f);
                 //rb.AddForce(Vector2.left * moveSpeed, ForceMode2D.Impulse);
                 //spriteRenderer.flipX = true;
@@ -87,7 +87,7 @@ public class PlayerController : MonoBehaviour
             velocity = new Vector3(0f, 0f, 0f);
             animator.SetBool("move", false);
         }
-        if (Input.GetKeyDown("q"))
+        if (Input.GetKey("q"))
         {
 
             animator.SetTrigger("attack");
@@ -115,29 +115,11 @@ public class PlayerController : MonoBehaviour
             velocity = new Vector3(0f, 0f, 0f);
         }
        
-        transform.Translate(velocity * Time.deltaTime * speed);
+        transform.Translate(velocity * Time.deltaTime * moveSpeed);
     }
 
 
     void FixedUpdate(){
-        //anim.Play("stand");
-        
-        //Vector3 velocity = new Vector3(moveHorizontal, 0.0f, 0f);
-        
-       
-            //rb.AddForce(velocity , ForceMode2D.Impulse);
-            
-        //animation got mirrored when player goes left
-        //    if (Input.GetAxis("Horizontal") < 0)
-        //{
-        //    velocity = new Vector3(-1f, 0f, 0f);
-        //    rb.AddForce(Vector2.left * moveSpeed, ForceMode2D.Impulse);
-        //    spriteRenderer.flipX = true;
-        //}
-        //else
-        //{
-        //    spriteRenderer.flipX = false;
-        //}
 
 
         // jump
@@ -159,14 +141,13 @@ public class PlayerController : MonoBehaviour
 
         //bool right = contactPoint.x > center.x;
         bool bottom = contactPoint.y < center.y;
-        print("center " + center.y);
-        print(contactPoint.y);
+        //print("center " + center.y);
+        //print(contactPoint.y);
 
         //if (bottom)
         //{
             animator.SetBool("jump", false);
             isGrounded = true;
-            Debug.Log("test");
             print("GROUNDED");
             canJump = true;
             
