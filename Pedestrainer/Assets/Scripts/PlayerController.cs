@@ -211,7 +211,7 @@ public class PlayerController : MonoBehaviour
             //setBack();
             transform.rotation = Quaternion.identity;
             animator.SetTrigger("fall");
-            
+            gameController.loseHP(1);
         }
 
 

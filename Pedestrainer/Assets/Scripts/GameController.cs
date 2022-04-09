@@ -6,11 +6,12 @@ using UnityEngine.SceneManagement;
 public class GameController : MonoBehaviour
 {
     public int healthPoint;
+    public int maxHP;
 
     // Start is called before the first frame update
     void Start()
     {
-        healthPoint = 5;
+        
     }
 
     public void startGame(){
@@ -30,11 +31,14 @@ public class GameController : MonoBehaviour
     {
         healthPoint -= hp;
         Debug.Log("Current HP: "+healthPoint);
-      
     }
     public int currentHP()
     {
         return healthPoint;
+    }
+    public int getMaxHP()
+    {
+        return maxHP;
     }
     public void recoverHP(int hp)
     {
