@@ -7,9 +7,9 @@ public class PlayerController : MonoBehaviour
     private SpriteRenderer rend;
     private Animator anim;
     private Vector3 velocity;
-    public float speed = 3.0f;
+    //public float speed = 3.0f;
     public float jumpSpeed;
-    public float moveSpeed = 3.25f;
+    public float moveSpeed;
     //public Transform ground;
     private bool grounded;
 
@@ -19,7 +19,14 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private SpriteRenderer spriteRenderer;
     private bool isGrounded = true;
+
+    float jumpTime;
+    bool jumpCancelled;
     
+    public float buttonTime = 0.5f;
+    public float jumpHeight = 5;
+    public float cancelRate = 100;
+    public float distanceToCheck=0.5f;
 
 
     // Start is called before the first frame update
@@ -55,26 +62,35 @@ public class PlayerController : MonoBehaviour
         //velocity = new Vector3(0f, 0f, 0f);
         transform.rotation = Quaternion.identity;
 
+        //  if (Physics2D.Raycast(transform.position, Vector2.down, distanceToCheck))
+        // {
+        //     isGrounded = true;
+        // }
+        // else
+        // {
+        //     isGrounded = false;
+        // }
+
         //animation 
         if (Input.GetAxis("Horizontal") != 0)
         {
             
-            if (Input.GetKeyDown("d"))
+            if (Input.GetKey("d"))
             {
                 animator.SetBool("move", true);
                
-                velocity = new Vector3(1 * moveSpeed * Time.deltaTime, 0, 0);
+                velocity = new Vector3(1, 0, 0);
                 spriteRenderer.flipX = false;
                 //rb.AddForce(Vector2.right * moveSpeed, ForceMode2D.Impulse);
             }
-            else if (Input.GetKeyDown("a"))
+            else if (Input.GetKey("a"))
             {
                 spriteRenderer.flipX = true;
                 
                 animator.SetBool("move", true);
                 
            
-                velocity = new Vector3(-1*moveSpeed*Time.deltaTime, 0, 0);
+                velocity = new Vector3(-1, 0, 0);
                 //velocity = new Vector3(-1f, 0f, 0f);
                 //rb.AddForce(Vector2.left * moveSpeed, ForceMode2D.Impulse);
                 //spriteRenderer.flipX = true;
@@ -92,18 +108,28 @@ public class PlayerController : MonoBehaviour
 
             animator.SetTrigger("attack");
         }
+        if (Input.GetKeyDown(KeyCode.Space)&&isGrounded) 
+        {
+            float jumpForce = Mathf.Sqrt(jumpSpeed * -2 * (Physics2D.gravity.y * rb.gravityScale));
+            rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+            canJump = true;
+            jumpCancelled = false;
+            jumpTime = 0;
+        
+        }
+        if (canJump)
+        {
+            jumpTime += Time.deltaTime;
+            if (Input.GetKeyUp(KeyCode.Space))
+            {
+                jumpCancelled = true;
+            }
+            if (jumpTime > buttonTime)
+            {
+                canJump = false;
+            }
+        }
 
-        //generate velocity to move horizontally
-        //velocity = new Vector3(Input.GetAxis("Horizontal") * 1f, 0f, 0f);
-        //grounded = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground"));
-
-        //if ( Input.GetKeyDown("space")&&isGrounded)
-        //{
-        //    print("canjump");
-
-        //    canJump = true;
-        //    shouldJump = true;
-        //}
 
         //make sure the obect is inside the borders... if edge is hit reverse direction
         if ((transform.position.x <= leftBorder + width / 2.0) && velocity.x < 0f)
@@ -115,38 +141,20 @@ public class PlayerController : MonoBehaviour
             velocity = new Vector3(0f, 0f, 0f);
         }
        
-        transform.Translate(velocity * Time.deltaTime * speed);
+        transform.Translate(velocity * Time.deltaTime * moveSpeed);
     }
 
 
     void FixedUpdate(){
-        //anim.Play("stand");
-        
-        //Vector3 velocity = new Vector3(moveHorizontal, 0.0f, 0f);
-        
-       
-            //rb.AddForce(velocity , ForceMode2D.Impulse);
-            
-        //animation got mirrored when player goes left
-        //    if (Input.GetAxis("Horizontal") < 0)
-        //{
-        //    velocity = new Vector3(-1f, 0f, 0f);
-        //    rb.AddForce(Vector2.left * moveSpeed, ForceMode2D.Impulse);
-        //    spriteRenderer.flipX = true;
-        //}
-        //else
-        //{
-        //    spriteRenderer.flipX = false;
-        //}
-
 
         // jump
-        if (canJump&&Input.GetKeyDown("space") && isGrounded)
+        if (jumpCancelled && canJump && rb.velocity.y>0)
         {
             print("jump");
    
-            rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
-            canJump = false;
+            //rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
+            rb.AddForce(Vector2.down * cancelRate);
+            //canJump = false;
         }
     }
 
