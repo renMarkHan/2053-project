@@ -7,9 +7,9 @@ public class PlayerController : MonoBehaviour
     private SpriteRenderer rend;
     private Animator anim;
     private Vector3 velocity;
-    public float speed = 3.0f;
+    //public float speed = 3.0f;
     public float jumpSpeed;
-    public float moveSpeed = 3.25f;
+    public float moveSpeed;
     //public Transform ground;
     private bool grounded;
 
@@ -19,7 +19,16 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private SpriteRenderer spriteRenderer;
     private bool isGrounded = true;
+
+    float jumpTime;
+    bool jumpCancelled;
     
+    public float buttonTime = 0.5f;
+    public float jumpHeight = 5;
+    public float cancelRate = 100;
+    public float distanceToCheck=0.5f;
+    public GameController gameController;
+    private bool gameOver; 
 
 
     // Start is called before the first frame update
@@ -55,104 +64,157 @@ public class PlayerController : MonoBehaviour
         //velocity = new Vector3(0f, 0f, 0f);
         transform.rotation = Quaternion.identity;
 
-        //animation 
-        if (Input.GetAxis("Horizontal") != 0)
+        //  if (Physics2D.Raycast(transform.position, Vector2.down, distanceToCheck))
+        // {
+        //     isGrounded = true;
+        // }
+        // else
+        // {
+        //     isGrounded = false;
+        // }
+        if (gameController.healthPoint <= 0)
         {
+            animator.SetBool("die", true);
+            gameOver = true;
             
-            if (Input.GetKeyDown("d"))
+        }
+
+
+        if(gameOver == false)
+        {
+
+            //animation 
+            if (Input.GetAxis("Horizontal") != 0)
             {
-                animator.SetBool("move", true);
-               
-                velocity = new Vector3(1 * moveSpeed * Time.deltaTime, 0, 0);
-                spriteRenderer.flipX = false;
-                //rb.AddForce(Vector2.right * moveSpeed, ForceMode2D.Impulse);
+
+                if (Input.GetKey("d"))
+                {
+                    animator.SetBool("move", true);
+
+                    velocity = new Vector3(1 * moveSpeed * Time.deltaTime, 0, 0);
+                    spriteRenderer.flipX = false;
+                    //rb.AddForce(Vector2.right * moveSpeed, ForceMode2D.Impulse);
+                }
+                else if (Input.GetKey("a"))
+                {
+                    spriteRenderer.flipX = true;
+
+                    animator.SetBool("move", true);
+
+
+                    velocity = new Vector3(-1 * moveSpeed * Time.deltaTime, 0, 0);
+                    //velocity = new Vector3(-1f, 0f, 0f);
+                    //rb.AddForce(Vector2.left * moveSpeed, ForceMode2D.Impulse);
+                    //spriteRenderer.flipX = true;
+                }
+
+
             }
-            else if (Input.GetKeyDown("a"))
+            else
             {
-                spriteRenderer.flipX = true;
-                
-                animator.SetBool("move", true);
-                
-           
-                velocity = new Vector3(-1*moveSpeed*Time.deltaTime, 0, 0);
-                //velocity = new Vector3(-1f, 0f, 0f);
-                //rb.AddForce(Vector2.left * moveSpeed, ForceMode2D.Impulse);
-                //spriteRenderer.flipX = true;
+                velocity = new Vector3(0f, 0f, 0f);
+                animator.SetBool("move", false);
+            }
+            if (Input.GetKeyDown("q"))
+            {
+
+                animator.SetTrigger("attack");
             }
 
-
-        }
-        else
+        
+        if (Input.GetKeyDown(KeyCode.Space)&&isGrounded) 
         {
-            velocity = new Vector3(0f, 0f, 0f);
-            animator.SetBool("move", false);
+            float jumpForce = Mathf.Sqrt(jumpSpeed * -2 * (Physics2D.gravity.y * rb.gravityScale));
+            rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+            canJump = true;
+            jumpCancelled = false;
+            jumpTime = 0;
+        
         }
-        if (Input.GetKeyDown("q"))
+        if (canJump)
         {
-
-            animator.SetTrigger("attack");
+            jumpTime += Time.deltaTime;
+            if (Input.GetKeyUp(KeyCode.Space))
+            {
+                jumpCancelled = true;
+            }
+            if (jumpTime > buttonTime)
+            {
+                canJump = false;
+            }
         }
 
-        //generate velocity to move horizontally
-        //velocity = new Vector3(Input.GetAxis("Horizontal") * 1f, 0f, 0f);
-        //grounded = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground"));
+            //generate velocity to move horizontally
+            //velocity = new Vector3(Input.GetAxis("Horizontal") * 1f, 0f, 0f);
+            //grounded = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground"));
 
-        //if ( Input.GetKeyDown("space")&&isGrounded)
-        //{
-        //    print("canjump");
+            //if ( Input.GetKeyDown("space")&&isGrounded)
+            //{
+            //    print("canjump");
 
-        //    canJump = true;
-        //    shouldJump = true;
-        //}
+            //    canJump = true;
+            //    shouldJump = true;
+            //}
 
-        //make sure the obect is inside the borders... if edge is hit reverse direction
-        if ((transform.position.x <= leftBorder + width / 2.0) && velocity.x < 0f)
-        {
-            velocity = new Vector3(0f, 0f, 0f);
-        }
-        if ((transform.position.x >= rightBorder - width / 2.0) && velocity.x > 0f)
-        {
-            velocity = new Vector3(0f, 0f, 0f);
-        }
+            //make sure the obect is inside the borders... if edge is hit reverse direction
+            if ((transform.position.x <= leftBorder + width / 2.0) && velocity.x < 0f)
+            {
+                velocity = new Vector3(0f, 0f, 0f);
+            }
+            if ((transform.position.x >= rightBorder - width / 2.0) && velocity.x > 0f)
+            {
+                velocity = new Vector3(0f, 0f, 0f);
+            }
        
-        transform.Translate(velocity * Time.deltaTime * speed);
+        transform.Translate(velocity * Time.deltaTime * moveSpeed);
     }
 
 
     void FixedUpdate(){
-        //anim.Play("stand");
-        
-        //Vector3 velocity = new Vector3(moveHorizontal, 0.0f, 0f);
-        
-       
-            //rb.AddForce(velocity , ForceMode2D.Impulse);
-            
-        //animation got mirrored when player goes left
-        //    if (Input.GetAxis("Horizontal") < 0)
-        //{
-        //    velocity = new Vector3(-1f, 0f, 0f);
-        //    rb.AddForce(Vector2.left * moveSpeed, ForceMode2D.Impulse);
-        //    spriteRenderer.flipX = true;
-        //}
-        //else
-        //{
-        //    spriteRenderer.flipX = false;
-        //}
+      if (gameController.healthPoint <= 0)
+        {
+            animator.SetBool("die", true);
+            gameOver = true;
 
-
+        }
         // jump
-        if (canJump&&Input.GetKeyDown("space") && isGrounded)
+        if (gameOver == false)
+        {
+        if (jumpCancelled && canJump && rb.velocity.y>0)
         {
             print("jump");
    
-            rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
-            canJump = false;
+            //rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
+            rb.AddForce(Vector2.down * cancelRate);
+            //canJump = false;
+       
+            }
         }
     }
 
 
     private void OnCollisionEnter2D(Collision2D other)
+
     {
+        if (gameController.healthPoint <= 0)
+        {
+           // setBack();
+            transform.rotation = Quaternion.identity;
+            animator.SetBool("die", true);
+            gameOver = true;
+
+        }
+
+        if (other.collider.gameObject.CompareTag("Trap"))
+        {
+            //setBack();
+            transform.rotation = Quaternion.identity;
+            animator.SetTrigger("fall");
+            
+        }
+
+
+
         Collider2D collider = other.collider;
         Vector3 contactPoint = other.contacts[0].point;
         Vector3 center = collider.bounds.center;
@@ -176,11 +238,15 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-
+       
         print("collision exit");
             isGrounded = false;
         animator.SetBool("jump", true);
 
     }
-
+    private void setBack()
+    {
+        Vector3 velocityTemp = new Vector3(-1 *10 * 10*Time.deltaTime, 1 * 10* Time.deltaTime*3, 0);
+        transform.Translate(velocityTemp * Time.deltaTime * 30);
+    }
 }
