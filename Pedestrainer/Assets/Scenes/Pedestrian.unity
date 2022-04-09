@@ -177,11 +177,11 @@ GameObject:
   - component: {fileID: 91917033}
   - component: {fileID: 91917032}
   - component: {fileID: 91917034}
-  - component: {fileID: 91917036}
   - component: {fileID: 91917035}
+  - component: {fileID: 91917036}
   m_Layer: 0
   m_Name: Tilemap_trap
-  m_TagString: Untagged
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -194,7 +194,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 91917030}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.06, y: 0.05, z: 0}
+  m_LocalPosition: {x: 0.06, y: -0.11, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1128191923}
@@ -625,6 +625,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18cca4550e6c5400099e845873956588, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  newPlayerPosition: {x: -25, y: -2}
+  playerStorage: {fileID: 11400000, guid: 4906e0f3e0cdef64ea5a444aa4c7924a, type: 2}
 --- !u!4 &741657113
 Transform:
   m_ObjectHideFlags: 0
@@ -633,7 +635,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 741657110}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 22.21, y: -1.08, z: -0.7799645}
+  m_LocalPosition: {x: 21.65, y: -1.56, z: -0.7799645}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -4512,7 +4514,7 @@ TilemapCollider2D:
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_UsedByEffector: 0
+  m_UsedByEffector: 1
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   m_MaximumTileChangeCount: 1000
@@ -5004,7 +5006,7 @@ PrefabInstance:
     - target: {fileID: 4188470391535540701, guid: 78d0bcb8600704ae1af6481f05adece8,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 19.456903
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4188470391535540701, guid: 78d0bcb8600704ae1af6481f05adece8,
         type: 3}
