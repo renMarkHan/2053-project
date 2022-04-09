@@ -6,7 +6,7 @@ public class CameraController : MonoBehaviour
 {
 
     public Transform followTransform;
-    //public BoxCollider2D mapBounds;
+    public BoxCollider2D mapBounds;
 
     private float xMin, xMax, yMin, yMax;
     private float camY, camX;
@@ -22,8 +22,8 @@ public class CameraController : MonoBehaviour
         xMin = -20.8f;
         //xMax = mapBounds.bounds.max.x;
         xMax = 22.8f;
-        //yMin = mapBounds.bounds.min.y;
-        //yMax = mapBounds.bounds.max.y;
+        yMin = mapBounds.bounds.min.y;
+        yMax = mapBounds.bounds.max.y;
         mainCam = GetComponent<Camera>();
         camOrthsize = mainCam.orthographicSize;
         cameraRatio = (xMax + camOrthsize) / 2.0f;

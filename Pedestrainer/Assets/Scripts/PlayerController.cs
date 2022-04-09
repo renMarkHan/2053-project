@@ -38,6 +38,7 @@ public class PlayerController : MonoBehaviour
         rend = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         canJump = true;
+        gameOver = false;
         //shouldJump = false;
 
         animator = GetComponent<Animator>();
@@ -72,15 +73,16 @@ public class PlayerController : MonoBehaviour
         // {
         //     isGrounded = false;
         // }
+
         if (gameController.healthPoint <= 0)
         {
             animator.SetBool("die", true);
             gameOver = true;
-            
+
         }
 
 
-        if(gameOver == false)
+        if (!gameOver)
         {
 
             //animation 
@@ -90,7 +92,6 @@ public class PlayerController : MonoBehaviour
                 if (Input.GetKey("d"))
                 {
                     animator.SetBool("move", true);
-
                     velocity = new Vector3(1, 0, 0);
                     spriteRenderer.flipX = false;
                     //rb.AddForce(Vector2.right * moveSpeed, ForceMode2D.Impulse);
@@ -100,7 +101,6 @@ public class PlayerController : MonoBehaviour
                     spriteRenderer.flipX = true;
 
                     animator.SetBool("move", true);
-
 
                     velocity = new Vector3(-1, 0, 0);
                     //velocity = new Vector3(-1f, 0f, 0f);

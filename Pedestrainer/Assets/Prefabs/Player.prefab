@@ -146,11 +146,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jumpSpeed: 60
-  moveSpeed: 9
+  moveSpeed: 3
   buttonTime: 0.5
   jumpHeight: 5
   cancelRate: 100
   distanceToCheck: 0.5
+  gameController: {fileID: 4904943809566111295, guid: 9da57728261104491a13e8054706663d,
+    type: 3}
 --- !u!95 &4188470391535540698
 Animator:
   serializedVersion: 3
