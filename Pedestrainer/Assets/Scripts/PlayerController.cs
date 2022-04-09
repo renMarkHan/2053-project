@@ -38,6 +38,7 @@ public class PlayerController : MonoBehaviour
         rend = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         canJump = true;
+        gameOver = false;
         //shouldJump = false;
 
         animator = GetComponent<Animator>();
@@ -72,15 +73,16 @@ public class PlayerController : MonoBehaviour
         // {
         //     isGrounded = false;
         // }
+
         if (gameController.healthPoint <= 0)
         {
             animator.SetBool("die", true);
             gameOver = true;
-            
+
         }
 
 
-        if(gameOver == false)
+        if (!gameOver)
         {
 
             //animation 
@@ -90,8 +92,7 @@ public class PlayerController : MonoBehaviour
                 if (Input.GetKey("d"))
                 {
                     animator.SetBool("move", true);
-
-                    velocity = new Vector3(1 * moveSpeed * Time.deltaTime, 0, 0);
+                    velocity = new Vector3(1, 0, 0);
                     spriteRenderer.flipX = false;
                     //rb.AddForce(Vector2.right * moveSpeed, ForceMode2D.Impulse);
                 }
@@ -101,8 +102,7 @@ public class PlayerController : MonoBehaviour
 
                     animator.SetBool("move", true);
 
-
-                    velocity = new Vector3(-1 * moveSpeed * Time.deltaTime, 0, 0);
+                    velocity = new Vector3(-1, 0, 0);
                     //velocity = new Vector3(-1f, 0f, 0f);
                     //rb.AddForce(Vector2.left * moveSpeed, ForceMode2D.Impulse);
                     //spriteRenderer.flipX = true;
@@ -188,8 +188,9 @@ public class PlayerController : MonoBehaviour
             rb.AddForce(Vector2.down * cancelRate);
             //canJump = false;
        
-            }
+         }
         }
+    }
     }
 
 
@@ -221,14 +222,13 @@ public class PlayerController : MonoBehaviour
 
         //bool right = contactPoint.x > center.x;
         bool bottom = contactPoint.y < center.y;
-        print("center " + center.y);
-        print(contactPoint.y);
+        //print("center " + center.y);
+        //print(contactPoint.y);
 
         //if (bottom)
         //{
             animator.SetBool("jump", false);
             isGrounded = true;
-            Debug.Log("test");
             print("GROUNDED");
             canJump = true;
             
