@@ -19,7 +19,8 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private SpriteRenderer spriteRenderer;
     private bool isGrounded = true;
-    
+    public GameController gameController;
+    private bool gameOver; 
 
 
     // Start is called before the first frame update
@@ -39,94 +40,113 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // calculate location of screen borders
-        // this will make more sense after we discuss vectors and 3D
-        var dist = (transform.position - Camera.main.transform.position).z;
-        var leftBorder = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, dist)).x;
-        var rightBorder = Camera.main.ViewportToWorldPoint(new Vector3(1, 0, dist)).x;
-        var bottomBorder = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, dist)).y;
-        var topBorder = Camera.main.ViewportToWorldPoint(new Vector3(0, 1, dist)).y;
-
-        //get the width of the object
-        float width = rend.bounds.size.x;
-        float height = rend.bounds.size.y;
-        float moveHorizontal = Input.GetAxis("Horizontal");
-
-        //velocity = new Vector3(0f, 0f, 0f);
-        transform.rotation = Quaternion.identity;
-
-        //animation 
-        if (Input.GetAxis("Horizontal") != 0)
+        if (gameController.healthPoint <= 0)
         {
+            animator.SetBool("die", true);
+            gameOver = true;
             
-            if (Input.GetKeyDown("d"))
+        }
+
+
+        if(gameOver == false)
+        {
+            // calculate location of screen borders
+            // this will make more sense after we discuss vectors and 3D
+            var dist = (transform.position - Camera.main.transform.position).z;
+            var leftBorder = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, dist)).x;
+            var rightBorder = Camera.main.ViewportToWorldPoint(new Vector3(1, 0, dist)).x;
+            var bottomBorder = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, dist)).y;
+            var topBorder = Camera.main.ViewportToWorldPoint(new Vector3(0, 1, dist)).y;
+
+            //get the width of the object
+            float width = rend.bounds.size.x;
+            float height = rend.bounds.size.y;
+            float moveHorizontal = Input.GetAxis("Horizontal");
+
+            //no rotation
+            transform.rotation = Quaternion.identity;
+
+            //animation 
+            if (Input.GetAxis("Horizontal") != 0)
             {
-                animator.SetBool("move", true);
-               
-                velocity = new Vector3(1 * moveSpeed * Time.deltaTime, 0, 0);
-                spriteRenderer.flipX = false;
-                //rb.AddForce(Vector2.right * moveSpeed, ForceMode2D.Impulse);
+
+                if (Input.GetKey("d"))
+                {
+                    animator.SetBool("move", true);
+
+                    velocity = new Vector3(1 * moveSpeed * Time.deltaTime, 0, 0);
+                    spriteRenderer.flipX = false;
+                    //rb.AddForce(Vector2.right * moveSpeed, ForceMode2D.Impulse);
+                }
+                else if (Input.GetKey("a"))
+                {
+                    spriteRenderer.flipX = true;
+
+                    animator.SetBool("move", true);
+
+
+                    velocity = new Vector3(-1 * moveSpeed * Time.deltaTime, 0, 0);
+                    //velocity = new Vector3(-1f, 0f, 0f);
+                    //rb.AddForce(Vector2.left * moveSpeed, ForceMode2D.Impulse);
+                    //spriteRenderer.flipX = true;
+                }
+
+
             }
-            else if (Input.GetKeyDown("a"))
+            else
             {
-                spriteRenderer.flipX = true;
-                
-                animator.SetBool("move", true);
-                
-           
-                velocity = new Vector3(-1*moveSpeed*Time.deltaTime, 0, 0);
-                //velocity = new Vector3(-1f, 0f, 0f);
-                //rb.AddForce(Vector2.left * moveSpeed, ForceMode2D.Impulse);
-                //spriteRenderer.flipX = true;
+                velocity = new Vector3(0f, 0f, 0f);
+                animator.SetBool("move", false);
+            }
+            if (Input.GetKeyDown("q"))
+            {
+
+                animator.SetTrigger("attack");
             }
 
+            //generate velocity to move horizontally
+            //velocity = new Vector3(Input.GetAxis("Horizontal") * 1f, 0f, 0f);
+            //grounded = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground"));
 
+            //if ( Input.GetKeyDown("space")&&isGrounded)
+            //{
+            //    print("canjump");
+
+            //    canJump = true;
+            //    shouldJump = true;
+            //}
+
+            //make sure the obect is inside the borders... if edge is hit reverse direction
+            if ((transform.position.x <= leftBorder + width / 2.0) && velocity.x < 0f)
+            {
+                velocity = new Vector3(0f, 0f, 0f);
+            }
+            if ((transform.position.x >= rightBorder - width / 2.0) && velocity.x > 0f)
+            {
+                velocity = new Vector3(0f, 0f, 0f);
+            }
+
+            transform.Translate(velocity * Time.deltaTime * speed);
         }
-        else
-        {
-            velocity = new Vector3(0f, 0f, 0f);
-            animator.SetBool("move", false);
-        }
-        if (Input.GetKeyDown("q"))
-        {
-
-            animator.SetTrigger("attack");
-        }
-
-        //generate velocity to move horizontally
-        //velocity = new Vector3(Input.GetAxis("Horizontal") * 1f, 0f, 0f);
-        //grounded = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground"));
-
-        //if ( Input.GetKeyDown("space")&&isGrounded)
-        //{
-        //    print("canjump");
-
-        //    canJump = true;
-        //    shouldJump = true;
-        //}
-
-        //make sure the obect is inside the borders... if edge is hit reverse direction
-        if ((transform.position.x <= leftBorder + width / 2.0) && velocity.x < 0f)
-        {
-            velocity = new Vector3(0f, 0f, 0f);
-        }
-        if ((transform.position.x >= rightBorder - width / 2.0) && velocity.x > 0f)
-        {
-            velocity = new Vector3(0f, 0f, 0f);
-        }
-       
-        transform.Translate(velocity * Time.deltaTime * speed);
+        
     }
 
 
     void FixedUpdate(){
+
+        if (gameController.healthPoint <= 0)
+        {
+            animator.SetBool("die", true);
+            gameOver = true;
+
+        }
         //anim.Play("stand");
-        
+
         //Vector3 velocity = new Vector3(moveHorizontal, 0.0f, 0f);
-        
-       
-            //rb.AddForce(velocity , ForceMode2D.Impulse);
-            
+
+
+        //rb.AddForce(velocity , ForceMode2D.Impulse);
+
         //animation got mirrored when player goes left
         //    if (Input.GetAxis("Horizontal") < 0)
         //{
@@ -139,20 +159,44 @@ public class PlayerController : MonoBehaviour
         //    spriteRenderer.flipX = false;
         //}
 
-
-        // jump
-        if (canJump&&Input.GetKeyDown("space") && isGrounded)
+        if (gameOver == false)
         {
-            print("jump");
-   
-            rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
-            canJump = false;
+            // jump
+            if (canJump && Input.GetKeyDown("space") && isGrounded)
+
+            {
+                print("jump");
+
+                rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
+                canJump = false;
+            }
         }
+
     }
 
 
     private void OnCollisionEnter2D(Collision2D other)
+
     {
+        if (gameController.healthPoint <= 0)
+        {
+           // setBack();
+            transform.rotation = Quaternion.identity;
+            animator.SetBool("die", true);
+            gameOver = true;
+
+        }
+
+        if (other.collider.gameObject.CompareTag("Trap"))
+        {
+            //setBack();
+            transform.rotation = Quaternion.identity;
+            animator.SetTrigger("fall");
+            
+        }
+
+
+
         Collider2D collider = other.collider;
         Vector3 contactPoint = other.contacts[0].point;
         Vector3 center = collider.bounds.center;
@@ -176,11 +220,15 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-
+       
         print("collision exit");
             isGrounded = false;
         animator.SetBool("jump", true);
 
     }
-
+    private void setBack()
+    {
+        Vector3 velocityTemp = new Vector3(-1 *10 * 10*Time.deltaTime, 1 * 10* Time.deltaTime*3, 0);
+        transform.Translate(velocityTemp * Time.deltaTime * 30);
+    }
 }
