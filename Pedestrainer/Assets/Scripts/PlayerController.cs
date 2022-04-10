@@ -135,6 +135,7 @@ public class PlayerController : MonoBehaviour
             {
 
                 animator.SetTrigger("attack");
+                velocity.x = 0;
                 isAttack = true;
                 attackAudio = this.GetComponent<AudioSource>();
                 attackAudio.Play();
