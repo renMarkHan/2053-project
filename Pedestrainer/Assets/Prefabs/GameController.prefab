@@ -43,6 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39155494ceb122b40a07e8cf5e274219, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthPoint: 20
   maxHP: 20
   endText: {fileID: 0}
+  pauseMenu: {fileID: 8022390089883125112, guid: 10de0b3e61d7936488ae8d29b75798a8,
+    type: 3}

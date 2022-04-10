@@ -8,6 +8,9 @@ TextureImporter:
   - first:
       213: -1880932099913058521
     second: 56810_1
+  - first:
+      213: -7488995830325842737
+    second: 56810_2
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -101,7 +104,7 @@ TextureImporter:
         width: 764
         height: 379
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -122,7 +125,7 @@ TextureImporter:
         width: 760
         height: 384
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -130,6 +133,27 @@ TextureImporter:
       bones: []
       spriteID: 7277d02883695e5e0800000000000000
       internalID: -1880932099913058521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 56810_2
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 1641
+        width: 538
+        height: 195
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fcceb0188fdb11890800000000000000
+      internalID: -7488995830325842737
       vertices: []
       indices: 
       edges: []

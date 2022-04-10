@@ -27,9 +27,10 @@ public class PlayerController : MonoBehaviour
     public float cancelRate = 100;
     public float distanceToCheck=0.5f;
     public GameController gameController;
-    private bool gameOver; 
     private bool isFall;
     private bool isAttack;
+    private AudioSource attackAudio;
+    private AudioSource extraAudio;
 
     // Start is called before the first frame update
     void Start(){
@@ -37,7 +38,6 @@ public class PlayerController : MonoBehaviour
         rend = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         canJump = true;
-        gameOver = false;
         isFall = false;
         //shouldJump = false;
         animator = GetComponent<Animator>();
@@ -71,10 +71,9 @@ public class PlayerController : MonoBehaviour
         //     isGrounded = false;
         // }
 
-        if (gameController.healthPoint <= 0)
+        if (gameController.currentHP() <= 0)
         {
             animator.SetBool("die", true);
-            gameOver = true;
             gameController.gameLost();
         }
 
@@ -83,7 +82,7 @@ public class PlayerController : MonoBehaviour
             gameController.pause();
         }
 
-        if (!gameOver && !isFall)
+        if (!isFall)
         {
             RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.right);
             
@@ -137,7 +136,8 @@ public class PlayerController : MonoBehaviour
 
                 animator.SetTrigger("attack");
                 isAttack = true;
-               
+                attackAudio = this.GetComponent<AudioSource>();
+                attackAudio.Play();
                 StartCoroutine(PlayerCanAttackAgain());
                 
                 attack();
@@ -197,12 +197,11 @@ public class PlayerController : MonoBehaviour
             Debug.Log("Hitting: " + hit.collider.tag);
         //}
 
-        if (gameController.healthPoint <= 0){
+        if (gameController.currentHP() <= 0){
                 animator.SetBool("die", true);
-                gameOver = true;
+                gameController.gameLost();
             }
             // jump
-            if (gameOver == false){
                 if (jumpCancelled && canJump && rb.velocity.y>0){
                     print("jump");
         
@@ -211,7 +210,6 @@ public class PlayerController : MonoBehaviour
                     //canJump = false;
             
                 }
-            }
         }
  
     
@@ -225,7 +223,7 @@ public class PlayerController : MonoBehaviour
            // setBack();
             transform.rotation = Quaternion.identity;
             animator.SetBool("die", true);
-            gameOver = true;
+            gameController.gameLost();
 
         }
 
@@ -253,6 +251,8 @@ public class PlayerController : MonoBehaviour
                 gameController.setCurrentHP();
                 other.collider.gameObject.GetComponent<SpriteRenderer>().enabled = false;
                 other.collider.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+                extraAudio = other.collider.gameObject.GetComponent<AudioSource>();
+                extraAudio.Play();
             }else if(gameController.currentHP() == gameController.getMaxHP()){
                 other.collider.gameObject.GetComponent<BoxCollider2D>().enabled = false;
             }
@@ -264,6 +264,8 @@ public class PlayerController : MonoBehaviour
             if (isAttack )
             {
                 Destroy(other.collider);
+                extraAudio = other.gameObject.GetComponent<AudioSource>();
+                extraAudio.Play();
             }
             
             //setBack();
@@ -321,11 +323,10 @@ public class PlayerController : MonoBehaviour
     }
 
     private void OnCollisionExit2D(Collision2D collision){
-        if (collision.gameObject.name == "Tilemap_trap")
+        if (collision.gameObject.name == "Tilemap_trap" || collision.gameObject.CompareTag("enemy"))
         {
             animator.SetBool("jump", false);
             isGrounded = true;
-            print("exit trappppp");
         }
         else
         {
