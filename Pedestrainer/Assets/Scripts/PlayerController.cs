@@ -99,9 +99,8 @@ public class PlayerController : MonoBehaviour
                 }
                 else if (Input.GetKey("a"))
                 {
-                    spriteRenderer.flipX = true;
-
                     animator.SetBool("move", true);
+                    spriteRenderer.flipX = true;
 
                     velocity = new Vector3(-1, 0, 0);
                     //velocity = new Vector3(-1f, 0f, 0f);
@@ -144,18 +143,6 @@ public class PlayerController : MonoBehaviour
                 canJump = false;
             }
         }
-
-            //generate velocity to move horizontally
-            //velocity = new Vector3(Input.GetAxis("Horizontal") * 1f, 0f, 0f);
-            //grounded = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground"));
-
-            //if ( Input.GetKeyDown("space")&&isGrounded)
-            //{
-            //    print("canjump");
-
-            //    canJump = true;
-            //    shouldJump = true;
-            //}
 
             //make sure the obect is inside the borders... if edge is hit reverse direction
             if ((transform.position.x <= leftBorder + width / 2.0) && velocity.x < 0f)
@@ -230,14 +217,31 @@ public class PlayerController : MonoBehaviour
         //print("center " + center.y);
         //print(contactPoint.y);
 
-        if (bottom)
+        foreach(ContactPoint2D hitPos in other.contacts)
         {
-            animator.SetBool("jump", false);
-            isGrounded = true;
-            print("GROUNDED");
-            canJump = true;
-            
+            if (hitPos.normal.y > 0)
+            {
+                Debug.Log("hit bottom");
+                animator.SetBool("jump", false);
+                isGrounded = true;
+                print("GROUNDED");
+                canJump = true;
+            }
+            else if (hitPos.normal.y < 0)
+            {
+                //Debug.Log("hit top");
+            }
+            else
+            {
+                Debug.Log("hit middle");
+            }
         }
+
+        //if (bottom)
+        //{
+            
+            
+        //}
        
     }
 
