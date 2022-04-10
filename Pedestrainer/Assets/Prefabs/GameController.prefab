@@ -43,6 +43,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39155494ceb122b40a07e8cf5e274219, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthPoint: 15
+  healthPoint: 20
   maxHP: 20
   endText: {fileID: 0}

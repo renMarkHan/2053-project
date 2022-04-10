@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿    using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
     public GameController gameController;
     private bool gameOver; 
     private bool isFall;
+    private bool isAttack;
 
     // Start is called before the first frame update
     void Start(){
@@ -82,8 +83,11 @@ public class PlayerController : MonoBehaviour
             gameController.pause();
         }
 
-        if (!gameOver&& !isFall)
+        if (!gameOver && !isFall)
         {
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.right);
+            
+             
             //if the player fall down to the abyess
             if (transform.position.y < -6)
             {
@@ -92,7 +96,14 @@ public class PlayerController : MonoBehaviour
             }
 
 
-            //animation 
+            // keep size of collider
+            /*if (anim.GetCurrentAnimatorStateInfo(0).IsName("stand"))
+            {
+                GetComponent<BoxCollider2D>().size = new Vector2(0.67f, 0.74f);
+            }*/
+            
+
+            //animation &move
             if (Input.GetAxis("Horizontal") != 0)
             {
 
@@ -125,17 +136,23 @@ public class PlayerController : MonoBehaviour
             {
 
                 animator.SetTrigger("attack");
+                isAttack = true;
+               
+                StartCoroutine(PlayerCanAttackAgain());
+                
+                attack();
+                //this.gameObject.GetComponent<BoxCollider2D>().size = new Vector2(0.67f, 0.74f);
             }
 
-        
-            if (Input.GetKeyDown(KeyCode.Space)&&isGrounded) 
+
+            if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
             {
                 float jumpForce = Mathf.Sqrt(jumpSpeed * -2 * (Physics2D.gravity.y * rb.gravityScale));
                 rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
                 canJump = true;
                 jumpCancelled = false;
                 jumpTime = 0;
-            
+
             }
             if (canJump)
             {
@@ -159,13 +176,28 @@ public class PlayerController : MonoBehaviour
             {
                 velocity = new Vector3(0f, 0f, 0f);
             }
-       
+
             transform.Translate(velocity * Time.deltaTime * moveSpeed);
+        }
         }
 
 
         void FixedUpdate(){
-            if (gameController.healthPoint <= 0){
+
+        RaycastHit2D hit = Physics2D.Raycast(Vector2.zero, Vector2.right); ;
+
+        //If the collider of the object hit is not NUll
+        //if (hit.collider != null)
+        //{
+            float distance = Mathf.Abs(hit.point.x - transform.position.x);
+            print("distance " + hit.distance);
+            print("hit point " + hit.point);
+            print("transform position"+transform.position);
+            //Hit something, print the tag of the object
+            Debug.Log("Hitting: " + hit.collider.tag);
+        //}
+
+        if (gameController.healthPoint <= 0){
                 animator.SetBool("die", true);
                 gameOver = true;
             }
@@ -182,7 +214,7 @@ public class PlayerController : MonoBehaviour
             }
         }
  
-    }
+    
 
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -226,12 +258,35 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        //if run into enemy
+        if (other.collider.gameObject.CompareTag("enemy"))
+        {
+            if (isAttack )
+            {
+                Destroy(other.collider);
+            }
+            
+            //setBack();
+            transform.rotation = Quaternion.identity;
+            animator.SetTrigger("fall");
+            gameController.loseHP(2);
+            isFall = true;
+
+            ////this starts a coroutine... a non-blocking function
+            StartCoroutine(PlayerCanFireAgain());
+        }
+
+
+
+
+
+
         Collider2D collider = other.collider;
-        Vector3 contactPoint = other.contacts[0].point;
+        //Vector3 contactPoint = other.contacts[0].point;
         Vector3 center = collider.bounds.center;
 
         //bool right = contactPoint.x > center.x;
-        bool bottom = contactPoint.y < center.y;
+        //bool bottom = contactPoint.y < center.y;
         //print("center " + center.y);
         //print(contactPoint.y);
 
@@ -253,15 +308,35 @@ public class PlayerController : MonoBehaviour
             {
                 Debug.Log("hit middle");
             }
+            
         }
 
-       
+        print("contactPoint.x " + contactPoint.x);
+        print("center" + center.x);
+
+
+    }
+    private void attack()
+    {
+        GetComponent<BoxCollider2D>().size = new Vector2(1.5f, 0.74f);
+        StartCoroutine(PlayerCanAttackSizeChangeWait());
+        
     }
 
-    private void OnCollisionExit2D(Collision2D collision){      
-        print("collision exit");
+    private void OnCollisionExit2D(Collision2D collision){
+        if (collision.gameObject.name == "Tilemap_trap")
+        {
+            animator.SetBool("jump", false);
+            isGrounded = true;
+            print("exit trappppp");
+        }
+        else
+        {
+            print("is ground");
             isGrounded = false;
-        animator.SetBool("jump", true);
+            animator.SetBool("jump", true);
+        }
+        
     }
 
     private void setBack(){
@@ -274,5 +349,19 @@ public class PlayerController : MonoBehaviour
         //this will pause the execution of this method for 3 seconds without blocking
         yield return new WaitForSecondsRealtime(1);
         isFall = false;
+    }
+    IEnumerator PlayerCanAttackAgain()
+    {
+        //this will pause the execution of this method for 3 seconds without blocking
+        
+        yield return new WaitForSecondsRealtime(1);
+        
+        isAttack = false;
+    }
+    IEnumerator PlayerCanAttackSizeChangeWait()
+    {
+        yield return new WaitForSecondsRealtime(2);
+        this.gameObject.GetComponent<BoxCollider2D>().size = new Vector2(0.67f, 0.74f);
+        //Destroy(this.gameObject.GetComponent<BoxCollider2D>());
     }
 }
