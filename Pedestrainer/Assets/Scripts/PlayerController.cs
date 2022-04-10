@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿    using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
     public GameController gameController;
     private bool gameOver; 
     private bool isFall;
+    private bool isAttack;
 
     // Start is called before the first frame update
     void Start(){
@@ -91,7 +92,14 @@ public class PlayerController : MonoBehaviour
             }
 
 
-            //animation 
+            // keep size of collider
+            /*if (anim.GetCurrentAnimatorStateInfo(0).IsName("stand"))
+            {
+                GetComponent<BoxCollider2D>().size = new Vector2(0.67f, 0.74f);
+            }*/
+            
+
+            //animation &move
             if (Input.GetAxis("Horizontal") != 0)
             {
 
@@ -124,9 +132,15 @@ public class PlayerController : MonoBehaviour
             {
 
                 animator.SetTrigger("attack");
+                isAttack = true;
+               
+                StartCoroutine(PlayerCanAttackAgain());
+                
+                attack();
+                //this.gameObject.GetComponent<BoxCollider2D>().size = new Vector2(0.67f, 0.74f);
             }
 
-        
+
             if (Input.GetKeyDown(KeyCode.Space)&&isGrounded) 
             {
                 float jumpForce = Mathf.Sqrt(jumpSpeed * -2 * (Physics2D.gravity.y * rb.gravityScale));
@@ -215,12 +229,35 @@ public class PlayerController : MonoBehaviour
             GameObject.Find("Tilemap_hidden").GetComponent<TilemapRenderer>().enabled = false;
         }
 
+        //if run into enemy
+        if (other.collider.gameObject.CompareTag("enemy"))
+        {
+            if (isAttack )
+            {
+                Destroy(other.collider);
+            }
+            
+            //setBack();
+            transform.rotation = Quaternion.identity;
+            animator.SetTrigger("fall");
+            gameController.loseHP(2);
+            isFall = true;
+
+            ////this starts a coroutine... a non-blocking function
+            StartCoroutine(PlayerCanFireAgain());
+        }
+
+
+
+
+
+
         Collider2D collider = other.collider;
-        Vector3 contactPoint = other.contacts[0].point;
+        //Vector3 contactPoint = other.contacts[0].point;
         Vector3 center = collider.bounds.center;
 
         //bool right = contactPoint.x > center.x;
-        bool bottom = contactPoint.y < center.y;
+        //bool bottom = contactPoint.y < center.y;
         //print("center " + center.y);
         //print(contactPoint.y);
 
@@ -246,6 +283,12 @@ public class PlayerController : MonoBehaviour
 
        
     }
+    private void attack()
+    {
+        GetComponent<BoxCollider2D>().size = new Vector2(1.5f, 0.74f);
+        StartCoroutine(PlayerCanAttackSizeChangeWait());
+        
+    }
 
     private void OnCollisionExit2D(Collision2D collision){      
         print("collision exit");
@@ -263,5 +306,19 @@ public class PlayerController : MonoBehaviour
         //this will pause the execution of this method for 3 seconds without blocking
         yield return new WaitForSecondsRealtime(1);
         isFall = false;
+    }
+    IEnumerator PlayerCanAttackAgain()
+    {
+        //this will pause the execution of this method for 3 seconds without blocking
+        
+        yield return new WaitForSecondsRealtime(1);
+        
+        isAttack = false;
+    }
+    IEnumerator PlayerCanAttackSizeChangeWait()
+    {
+        yield return new WaitForSecondsRealtime(2);
+        this.gameObject.GetComponent<BoxCollider2D>().size = new Vector2(0.67f, 0.74f);
+        //Destroy(this.gameObject.GetComponent<BoxCollider2D>());
     }
 }
