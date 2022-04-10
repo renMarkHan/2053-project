@@ -10,11 +10,9 @@ public class TrapController : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
         
     {
-        print("....................");
         if (collision.collider.CompareTag("Player"))
         {
             gameobject.loseHP(1);
-            Debug.Log("NIGGGER");
         }
     }
 }

@@ -42,6 +42,11 @@ public class GameController : MonoBehaviour
     {
         return maxHP;
     }
+
+    public void setCurrentHP(){
+        healthPoint++;
+    }
+
     public void recoverHP(int hp)
     {
         healthPoint += hp;

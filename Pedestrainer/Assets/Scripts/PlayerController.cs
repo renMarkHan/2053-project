@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -213,6 +214,16 @@ public class PlayerController : MonoBehaviour
         if(other.collider.gameObject.CompareTag("Button")){
             other.collider.gameObject.GetComponent<SpriteRenderer>().enabled = false;
             GameObject.Find("Tilemap_hidden").GetComponent<TilemapRenderer>().enabled = false;
+        }
+
+        if(other.collider.gameObject.CompareTag("Heart")){
+            if(gameController.currentHP() < gameController.getMaxHP()){
+                gameController.setCurrentHP();
+                other.collider.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+                other.collider.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+            }else if(gameController.currentHP() == gameController.getMaxHP()){
+                other.collider.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+            }
         }
 
         Collider2D collider = other.collider;

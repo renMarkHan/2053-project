@@ -5,15 +5,40 @@ using UnityEngine.SceneManagement;
 
 public class SceneTransition : MonoBehaviour
 {
+    public bool isSecret = false;
+    public int scenePosition;
     public Vector2 newPlayerPosition;
     public VectorValue playerStorage;
 
-    public void OnTriggerEnter2D(Collider2D collision)
+    void Start(){
+        
+    }
+
+
+
+    public void OnTriggerEnter2D(Collider2D other)
     {
-        if(collision.CompareTag("Player") && !collision.isTrigger)
+        if(other.CompareTag("Player") && !other.isTrigger && !isSecret && (this.gameObject.name == "escape"))
         {
             playerStorage.initalValue = newPlayerPosition;
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            scenePosition = SceneManager.GetActiveScene().buildIndex;
+            SceneManager.LoadScene(scenePosition + 1);
+        }
+
+        if(other.CompareTag("Player") && !other.isTrigger && !isSecret && (this.gameObject.name == "transition")) 
+        {
+            isSecret = true;
+            playerStorage.initalValue = newPlayerPosition;
+            SceneManager.LoadScene("SecretScene");
+
+        }
+
+        if(other.CompareTag("Player") && !other.isTrigger && isSecret && (this.gameObject.name == "EscapeDoor"))
+        {
+            isSecret = false;
+            playerStorage.initalValue = newPlayerPosition;
+            SceneManager.LoadScene("Level5");
+
         }
     }
 }
