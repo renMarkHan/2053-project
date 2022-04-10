@@ -311,9 +311,6 @@ public class PlayerController : MonoBehaviour
             
         }
 
-        print("contactPoint.x " + contactPoint.x);
-        print("center" + center.x);
-
 
     }
     private void attack()
