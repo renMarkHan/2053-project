@@ -127,6 +127,7 @@ public class PlayerController : MonoBehaviour
             {
 
                 animator.SetTrigger("attack");
+                velocity.x = 0;
                 isAttack = true;
                 attackAudio = this.GetComponent<AudioSource>();
                 attackAudio.Play();
@@ -267,15 +268,20 @@ public class PlayerController : MonoBehaviour
                 extraAudio = other.gameObject.GetComponent<AudioSource>();
                 extraAudio.Play();
             }
-            
-            //setBack();
-            transform.rotation = Quaternion.identity;
-            animator.SetTrigger("fall");
-            gameController.loseHP(2);
-            isFall = true;
+            else
+            {
+                //setBack();
+                transform.rotation = Quaternion.identity;
+                animator.SetTrigger("fall");
+                gameController.loseHP(2);
+                isFall = true;
 
-            ////this starts a coroutine... a non-blocking function
-            StartCoroutine(PlayerCanFireAgain());
+                ////this starts a coroutine... a non-blocking function
+                StartCoroutine(PlayerCanFireAgain());
+            }
+            
+
+            
         }
 
 
