@@ -45,3 +45,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthPoint: 20
   maxHP: 20
+  endText: {fileID: 0}

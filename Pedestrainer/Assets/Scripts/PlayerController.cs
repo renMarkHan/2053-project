@@ -27,8 +27,7 @@ public class PlayerController : MonoBehaviour
     public float distanceToCheck=0.5f;
     public GameController gameController;
     private bool gameOver; 
-    private TilemapRenderer hiddenMap;
-
+    private bool isFall;
 
     // Start is called before the first frame update
     void Start(){
@@ -37,6 +36,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         canJump = true;
         gameOver = false;
+        isFall = false;
         //shouldJump = false;
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -74,12 +74,23 @@ public class PlayerController : MonoBehaviour
         {
             animator.SetBool("die", true);
             gameOver = true;
-
+            gameController.gameLost();
         }
 
-
-        if (!gameOver)
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
+            gameController.pause();
+        }
+
+        if (!gameOver&& !isFall)
+        {
+            //if the player fall down to the abyess
+            if (transform.position.y < -6)
+            {
+
+                gameController.loseHP(20);
+            }
+
 
             //animation 
             if (Input.GetAxis("Horizontal") != 0)
@@ -183,11 +194,18 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+        if (transform.position.y < -6)
+        {
+                
+                gameController.loseHP(20);
+        }
     }
 
 
-    private void OnCollisionEnter2D(Collision2D other){
-        if (gameController.healthPoint <= 0)
+    private void OnCollisionEnter2D(Collision2D other)
+
+    {
+        if (gameController.currentHP() <= 0)
         {
            // setBack();
             transform.rotation = Quaternion.identity;
@@ -202,6 +220,10 @@ public class PlayerController : MonoBehaviour
             transform.rotation = Quaternion.identity;
             animator.SetTrigger("fall");
             gameController.loseHP(1);
+            isFall = true;
+
+            ////this starts a coroutine... a non-blocking function
+            StartCoroutine(PlayerCanFireAgain());
         }
 
         if(other.collider.gameObject.CompareTag("Button")){
@@ -218,14 +240,14 @@ public class PlayerController : MonoBehaviour
         //print("center " + center.y);
         //print(contactPoint.y);
 
-        //if (bottom)
-        //{
+        if (bottom)
+        {
             animator.SetBool("jump", false);
             isGrounded = true;
             print("GROUNDED");
             canJump = true;
             
-        //}
+        }
        
     }
 
@@ -240,4 +262,10 @@ public class PlayerController : MonoBehaviour
         transform.Translate(velocityTemp * Time.deltaTime * 30);
     }
 
+    IEnumerator PlayerCanFireAgain()
+    {
+        //this will pause the execution of this method for 3 seconds without blocking
+        yield return new WaitForSecondsRealtime(1);
+        isFall = false;
+    }
 }
