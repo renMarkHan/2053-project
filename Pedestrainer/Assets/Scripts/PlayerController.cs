@@ -28,8 +28,8 @@ public class PlayerController : MonoBehaviour
     public float cancelRate = 100;
     public float distanceToCheck=0.5f;
     public GameController gameController;
-    private bool gameOver; 
-
+    private bool gameOver;
+    private bool isFall;
 
     // Start is called before the first frame update
     void Start()
@@ -39,6 +39,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         canJump = true;
         gameOver = false;
+        isFall = false;
         //shouldJump = false;
 
         animator = GetComponent<Animator>();
@@ -82,7 +83,7 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        if (!gameOver)
+        if (!gameOver&& !isFall)
         {
 
             //animation 
@@ -212,6 +213,10 @@ public class PlayerController : MonoBehaviour
             transform.rotation = Quaternion.identity;
             animator.SetTrigger("fall");
             gameController.loseHP(1);
+            isFall = true;
+
+            ////this starts a coroutine... a non-blocking function
+            StartCoroutine(PlayerCanFireAgain());
         }
 
 
@@ -248,5 +253,12 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 velocityTemp = new Vector3(-1 *10 * 10*Time.deltaTime, 1 * 10* Time.deltaTime*3, 0);
         transform.Translate(velocityTemp * Time.deltaTime * 30);
+    }
+
+    IEnumerator PlayerCanFireAgain()
+    {
+        //this will pause the execution of this method for 3 seconds without blocking
+        yield return new WaitForSecondsRealtime(1);
+        isFall = false;
     }
 }
