@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
   
-    private Animator anim;
+    private Animator animator;
     
     public float speed = 2.0f;
     private Vector3 velocity;
@@ -19,7 +19,7 @@ public class EnemyController : MonoBehaviour
         rb= GetComponent<Rigidbody2D>();
         velocity = new Vector3(0f, 0f, 0f);
         //rend = GetComponent<SpriteRenderer>();
-        anim = GetComponent<Animator>();
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -43,6 +43,6 @@ public class EnemyController : MonoBehaviour
             }
         }
         transform.Translate(velocity * Time.deltaTime * speed);
-        anim.Play("walk");
+        //animator.Play("walk");
     }
 }

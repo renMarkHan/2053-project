@@ -197,7 +197,7 @@ public class PlayerController : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D other)
 
     {
-        if (gameController.healthPoint <= 0)
+        if (gameController.currentHP() <= 0)
         {
            // setBack();
             transform.rotation = Quaternion.identity;
@@ -225,14 +225,14 @@ public class PlayerController : MonoBehaviour
         //print("center " + center.y);
         //print(contactPoint.y);
 
-        //if (bottom)
-        //{
+        if (bottom)
+        {
             animator.SetBool("jump", false);
             isGrounded = true;
             print("GROUNDED");
             canJump = true;
             
-        //}
+        }
        
     }
 
