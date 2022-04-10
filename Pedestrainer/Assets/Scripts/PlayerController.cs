@@ -40,7 +40,6 @@ public class PlayerController : MonoBehaviour
         //shouldJump = false;
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        hiddenMap = GetComponent<TilemapRenderer>();
     }
 
     // Update is called once per frame
@@ -240,14 +239,14 @@ public class PlayerController : MonoBehaviour
         //print("center " + center.y);
         //print(contactPoint.y);
 
-        if (bottom)
-        {
+        // if (bottom)
+        // {
             animator.SetBool("jump", false);
             isGrounded = true;
             print("GROUNDED");
             canJump = true;
             
-        }
+        //}
        
     }
 
