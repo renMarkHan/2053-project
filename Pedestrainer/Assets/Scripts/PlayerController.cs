@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class PlayerController : MonoBehaviour
 {
@@ -12,28 +13,24 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed;
     //public Transform ground;
     private bool grounded;
-
     private bool shouldJump;
     private bool canJump;
     private Rigidbody2D rb;
     private Animator animator;
     private SpriteRenderer spriteRenderer;
     private bool isGrounded = true;
-
     float jumpTime;
     bool jumpCancelled;
-    
     public float buttonTime = 0.5f;
     public float jumpHeight = 5;
     public float cancelRate = 100;
     public float distanceToCheck=0.5f;
     public GameController gameController;
-    private bool gameOver;
+    private bool gameOver; 
     private bool isFall;
 
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start(){
         velocity = new Vector3(0f, 0f, 0f);
         rend = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
@@ -41,15 +38,12 @@ public class PlayerController : MonoBehaviour
         gameOver = false;
         isFall = false;
         //shouldJump = false;
-
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update(){
         // calculate location of screen borders
         // this will make more sense after we discuss vectors and 3D
         var dist = (transform.position - Camera.main.transform.position).z;
@@ -79,12 +73,23 @@ public class PlayerController : MonoBehaviour
         {
             animator.SetBool("die", true);
             gameOver = true;
-
+            gameController.gameLost();
         }
 
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            gameController.pause();
+        }
 
         if (!gameOver&& !isFall)
         {
+            //if the player fall down to the abyess
+            if (transform.position.y < -6)
+            {
+
+                gameController.loseHP(20);
+            }
+
 
             //animation 
             if (Input.GetAxis("Horizontal") != 0)
@@ -122,27 +127,27 @@ public class PlayerController : MonoBehaviour
             }
 
         
-        if (Input.GetKeyDown(KeyCode.Space)&&isGrounded) 
-        {
-            float jumpForce = Mathf.Sqrt(jumpSpeed * -2 * (Physics2D.gravity.y * rb.gravityScale));
-            rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
-            canJump = true;
-            jumpCancelled = false;
-            jumpTime = 0;
-        
-        }
-        if (canJump)
-        {
-            jumpTime += Time.deltaTime;
-            if (Input.GetKeyUp(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space)&&isGrounded) 
             {
-                jumpCancelled = true;
+                float jumpForce = Mathf.Sqrt(jumpSpeed * -2 * (Physics2D.gravity.y * rb.gravityScale));
+                rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+                canJump = true;
+                jumpCancelled = false;
+                jumpTime = 0;
+            
             }
-            if (jumpTime > buttonTime)
+            if (canJump)
             {
-                canJump = false;
+                jumpTime += Time.deltaTime;
+                if (Input.GetKeyUp(KeyCode.Space))
+                {
+                    jumpCancelled = true;
+                }
+                if (jumpTime > buttonTime)
+                {
+                    canJump = false;
+                }
             }
-        }
 
             //make sure the obect is inside the borders... if edge is hit reverse direction
             if ((transform.position.x <= leftBorder + width / 2.0) && velocity.x < 0f)
@@ -154,37 +159,34 @@ public class PlayerController : MonoBehaviour
                 velocity = new Vector3(0f, 0f, 0f);
             }
        
-        transform.Translate(velocity * Time.deltaTime * moveSpeed);
-    }
-
-
-    void FixedUpdate(){
-      if (gameController.healthPoint <= 0)
-        {
-            animator.SetBool("die", true);
-            gameOver = true;
-
+            transform.Translate(velocity * Time.deltaTime * moveSpeed);
         }
-        // jump
-        if (gameOver == false)
-        {
-        if (jumpCancelled && canJump && rb.velocity.y>0)
-        {
-            print("jump");
-   
-            //rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
-            rb.AddForce(Vector2.down * cancelRate);
-            //canJump = false;
-       
-         }
+
+
+        void FixedUpdate(){
+            if (gameController.healthPoint <= 0){
+                animator.SetBool("die", true);
+                gameOver = true;
+            }
+            // jump
+            if (gameOver == false){
+                if (jumpCancelled && canJump && rb.velocity.y>0){
+                    print("jump");
+        
+                    //rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
+                    rb.AddForce(Vector2.down * cancelRate);
+                    //canJump = false;
+            
+                }
+            }
         }
-    }
+ 
     }
 
 
     private void OnCollisionEnter2D(Collision2D other)
 
-    {
+    {   // if no hp
         if (gameController.currentHP() <= 0)
         {
            // setBack();
@@ -194,6 +196,7 @@ public class PlayerController : MonoBehaviour
 
         }
 
+        // if run into trap
         if (other.collider.gameObject.CompareTag("Trap"))
         {
             //setBack();
@@ -206,7 +209,11 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(PlayerCanFireAgain());
         }
 
-
+        // if run into hidden button
+        if(other.collider.gameObject.CompareTag("Button")){
+            other.collider.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            GameObject.Find("Tilemap_hidden").GetComponent<TilemapRenderer>().enabled = false;
+        }
 
         Collider2D collider = other.collider;
         Vector3 contactPoint = other.contacts[0].point;
@@ -237,24 +244,16 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        //if (bottom)
-        //{
-            
-            
-        //}
        
     }
 
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-       
+    private void OnCollisionExit2D(Collision2D collision){      
         print("collision exit");
             isGrounded = false;
         animator.SetBool("jump", true);
-
     }
-    private void setBack()
-    {
+
+    private void setBack(){
         Vector3 velocityTemp = new Vector3(-1 *10 * 10*Time.deltaTime, 1 * 10* Time.deltaTime*3, 0);
         transform.Translate(velocityTemp * Time.deltaTime * 30);
     }
