@@ -48,8 +48,25 @@ public class GameController : MonoBehaviour
         Debug.Log("Current HP: " + healthPoint);
     }
 
+    public void gameLost()
+    {
+        Debug.Log( "Game lost!!!!!!");
+    }
+
     public void GameOver(){
         endText.text = "Game Over!!! You win!!!!!";
+    }
+    public void pause()
+    {
+        if(Time.timeScale == 0)
+        {
+            Time.timeScale = 1;
+        }
+        else
+        {
+            Time.timeScale = 0;
+        }
+
     }
 
     private void OnTriggerEnter2D(Collider2D other) {

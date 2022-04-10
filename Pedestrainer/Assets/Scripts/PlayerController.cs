@@ -79,12 +79,23 @@ public class PlayerController : MonoBehaviour
         {
             animator.SetBool("die", true);
             gameOver = true;
-
+            gameController.gameLost();
         }
 
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            gameController.pause();
+        }
 
         if (!gameOver&& !isFall)
         {
+            //if the player fall down to the abyess
+            if (transform.position.y < -6)
+            {
+
+                gameController.loseHP(20);
+            }
+
 
             //animation 
             if (Input.GetAxis("Horizontal") != 0)
@@ -172,7 +183,7 @@ public class PlayerController : MonoBehaviour
 
 
     void FixedUpdate(){
-      if (gameController.healthPoint <= 0)
+        if (gameController.healthPoint <= 0)
         {
             animator.SetBool("die", true);
             gameOver = true;
@@ -190,6 +201,11 @@ public class PlayerController : MonoBehaviour
             //canJump = false;
        
          }
+        }
+        if (transform.position.y < -6)
+        {
+                
+                gameController.loseHP(20);
         }
     }
     }
