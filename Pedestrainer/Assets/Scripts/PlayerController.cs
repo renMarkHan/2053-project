@@ -81,8 +81,11 @@ public class PlayerController : MonoBehaviour
             gameController.pause();
         }
 
-        if (!gameOver&& !isFall)
+        if (!gameOver && !isFall)
         {
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.right);
+            
+             
             //if the player fall down to the abyess
             if (transform.position.y < -6)
             {
@@ -126,15 +129,15 @@ public class PlayerController : MonoBehaviour
                 animator.SetTrigger("attack");
             }
 
-        
-            if (Input.GetKeyDown(KeyCode.Space)&&isGrounded) 
+
+            if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
             {
                 float jumpForce = Mathf.Sqrt(jumpSpeed * -2 * (Physics2D.gravity.y * rb.gravityScale));
                 rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
                 canJump = true;
                 jumpCancelled = false;
                 jumpTime = 0;
-            
+
             }
             if (canJump)
             {
@@ -158,13 +161,28 @@ public class PlayerController : MonoBehaviour
             {
                 velocity = new Vector3(0f, 0f, 0f);
             }
-       
+
             transform.Translate(velocity * Time.deltaTime * moveSpeed);
+        }
         }
 
 
         void FixedUpdate(){
-            if (gameController.healthPoint <= 0){
+
+        RaycastHit2D hit = Physics2D.Raycast(Vector2.zero, Vector2.right); ;
+
+        //If the collider of the object hit is not NUll
+        //if (hit.collider != null)
+        //{
+            float distance = Mathf.Abs(hit.point.x - transform.position.x);
+            print("distance " + hit.distance);
+            print("hit point " + hit.point);
+            print("transform position"+transform.position);
+            //Hit something, print the tag of the object
+            Debug.Log("Hitting: " + hit.collider.tag);
+        //}
+
+        if (gameController.healthPoint <= 0){
                 animator.SetBool("die", true);
                 gameOver = true;
             }
@@ -181,7 +199,7 @@ public class PlayerController : MonoBehaviour
             }
         }
  
-    }
+    
 
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -242,15 +260,29 @@ public class PlayerController : MonoBehaviour
             {
                 Debug.Log("hit middle");
             }
+            
         }
 
-       
+        print("contactPoint.x " + contactPoint.x);
+        print("center" + center.x);
+
+
     }
 
-    private void OnCollisionExit2D(Collision2D collision){      
-        print("collision exit");
+    private void OnCollisionExit2D(Collision2D collision){
+        if (collision.gameObject.name == "Tilemap_trap")
+        {
+            animator.SetBool("jump", false);
+            isGrounded = true;
+            print("exit trappppp");
+        }
+        else
+        {
+            print("is ground");
             isGrounded = false;
-        animator.SetBool("jump", true);
+            animator.SetBool("jump", true);
+        }
+        
     }
 
     private void setBack(){
