@@ -193,17 +193,13 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
-        if (transform.position.y < -6)
-        {
-                
-                gameController.loseHP(20);
-        }
+ 
     }
 
 
     private void OnCollisionEnter2D(Collision2D other)
 
-    {
+    {   // if no hp
         if (gameController.currentHP() <= 0)
         {
            // setBack();
@@ -213,6 +209,7 @@ public class PlayerController : MonoBehaviour
 
         }
 
+        // if run into trap
         if (other.collider.gameObject.CompareTag("Trap"))
         {
             //setBack();
@@ -225,6 +222,7 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(PlayerCanFireAgain());
         }
 
+        // if run into hidden button
         if(other.collider.gameObject.CompareTag("Button")){
             other.collider.gameObject.GetComponent<SpriteRenderer>().enabled = false;
             GameObject.Find("Tilemap_hidden").GetComponent<TilemapRenderer>().enabled = false;
