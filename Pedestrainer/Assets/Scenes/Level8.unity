@@ -521,7 +521,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 5.252539
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -840,7 +840,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 583569195}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.33, y: 0.3, z: 10}
+  m_LocalPosition: {x: 0.12, y: -0.05, z: 10}
   m_LocalScale: {x: 3, y: 3, z: 1}
   m_Children: []
   m_Father: {fileID: 366094971}
@@ -882,7 +882,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1147587365
+  m_SortingLayerID: 1317160579
   m_SortingLayer: -1
   m_SortingOrder: 0
   m_Sprite: {fileID: -3858156420736342728, guid: 9cf521d873c60df43aaa18933c49a35c,
@@ -967,7 +967,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &659047112
 GameObject:
@@ -1426,7 +1426,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -5215,7 +5215,7 @@ Transform:
   - {fileID: 659047113}
   - {fileID: 1738155984}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &2085800099 stripped
 Transform:

@@ -62,14 +62,6 @@ public class PlayerController : MonoBehaviour
         //velocity = new Vector3(0f, 0f, 0f);
         transform.rotation = Quaternion.identity;
 
-        //  if (Physics2D.Raycast(transform.position, Vector2.down, distanceToCheck))
-        // {
-        //     isGrounded = true;
-        // }
-        // else
-        // {
-        //     isGrounded = false;
-        // }
 
         if (gameController.currentHP() <= 0)
         {
@@ -144,6 +136,14 @@ public class PlayerController : MonoBehaviour
                 //this.gameObject.GetComponent<BoxCollider2D>().size = new Vector2(0.67f, 0.74f);
             }
 
+            //bug: help to fix jump problem
+            if (Input.GetKeyDown("w"))
+            {
+                animator.SetBool("jump", false);
+                isGrounded = true;
+                canJump = true;
+
+            }
 
             if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
             {
@@ -308,7 +308,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                Debug.Log("hit middle");
+                //Debug.Log("hit middle");
             }
             
         }
