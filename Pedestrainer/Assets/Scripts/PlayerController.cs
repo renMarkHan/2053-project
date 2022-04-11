@@ -1,8 +1,9 @@
-﻿    using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -31,6 +32,7 @@ public class PlayerController : MonoBehaviour
     private bool isAttack;
     private AudioSource attackAudio;
     private AudioSource extraAudio;
+    private Text endText;
 
     // Start is called before the first frame update
     void Start(){
@@ -329,7 +331,7 @@ public class PlayerController : MonoBehaviour
     }
 
     private void OnCollisionExit2D(Collision2D collision){
-        if (collision.gameObject.name == "Tilemap_trap" || collision.gameObject.CompareTag("enemy"))
+        if (collision.gameObject.name == "Tilemap_trap" || collision.gameObject.CompareTag("enemy")||collision.gameObject.CompareTag("Heart"))
         {
             animator.SetBool("jump", false);
             isGrounded = true;
@@ -339,6 +341,11 @@ public class PlayerController : MonoBehaviour
             print("is ground");
             isGrounded = false;
             animator.SetBool("jump", true);
+        }
+        if(collision.gameObject.CompareTag("END")){
+            endText = GameObject.Find("EndText").GetComponent<Text>();
+            endText.text = "YOU WON!";
+            StartCoroutine(gamePass());
         }
         
     }
@@ -367,5 +374,11 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSecondsRealtime(2);
         this.gameObject.GetComponent<BoxCollider2D>().size = new Vector2(0.67f, 0.74f);
         //Destroy(this.gameObject.GetComponent<BoxCollider2D>());
+    }
+    IEnumerator gamePass()
+    {
+        yield return new WaitForSecondsRealtime(2);
+        SceneManager.LoadScene("Mainmenu");
+        SceneManager.UnloadSceneAsync("GameController");
     }
 }

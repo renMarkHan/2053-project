@@ -84,9 +84,6 @@ public class GameController : MonoBehaviour
         SceneManager.UnloadSceneAsync("GameController");
     }
 
-    public void GameOver(){
-        endText.text = "Game Over!!! You win!!!!!";
-    }
     public void pause()
     {
         if(Time.timeScale == 0)
@@ -113,9 +110,4 @@ public class GameController : MonoBehaviour
     }
     
 
-    private void OnTriggerEnter2D(Collider2D other) {
-        if(other.CompareTag("Player")){
-            GameOver();
-        }
-    }
 }
